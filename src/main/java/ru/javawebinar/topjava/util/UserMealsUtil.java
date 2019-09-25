@@ -7,21 +7,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
-        int SIZE_OF_LIST = 10_000_000;
-        List<UserMeal> mealList = new ArrayList<>(SIZE_OF_LIST);
-        for (int i = 0; i < SIZE_OF_LIST; i++) {
-            mealList.add(new UserMeal(LocalDateTime.of(2015, Month.MAY, 31,13,0), "Обед", 500));
-        }
-        long start = System.currentTimeMillis();
+        List<UserMeal> mealList = Arrays.asList(
+                new UserMeal(LocalDateTime.of(2015, Month.MAY, 30,10,0), "Завтрак", 500),
+                new UserMeal(LocalDateTime.of(2015, Month.MAY, 30,13,0), "Обед", 1000),
+                new UserMeal(LocalDateTime.of(2015, Month.MAY, 30,20,0), "Ужин", 500),
+                new UserMeal(LocalDateTime.of(2015, Month.MAY, 31,10,0), "Завтрак", 1000),
+                new UserMeal(LocalDateTime.of(2015, Month.MAY, 31,13,0), "Обед", 500),
+                new UserMeal(LocalDateTime.of(2015, Month.MAY, 31,20,0), "Ужин", 510)
+        );
         getFilteredWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12,0), 2000);
-        System.out.println(System.currentTimeMillis() - start);
 //        .toLocalDate();
 //        .toLocalTime();
     }
@@ -60,7 +58,8 @@ public class UserMealsUtil {
             boolean exceed = false;
             if (sum > caloriesPerDay) exceed = true;
             for (UserMeal meal : entry.getValue()) {
-                resultList.add(new UserMealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), exceed));
+                if (TimeUtil.isBetween(meal.getDateTime().toLocalTime(), startTime, endTime))
+                    resultList.add(new UserMealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), exceed));
             }
 
         }
