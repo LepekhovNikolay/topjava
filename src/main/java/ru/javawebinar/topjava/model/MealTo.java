@@ -21,7 +21,7 @@ public class MealTo {
     }
 
 //    public Boolean getExcess() {
-//        return excess.get();
+//        return excess;
 //    }
 
     @Override
