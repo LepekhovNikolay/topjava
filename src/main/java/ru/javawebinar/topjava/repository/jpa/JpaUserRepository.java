@@ -8,7 +8,6 @@ import ru.javawebinar.topjava.repository.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.List;
 
 @Repository
@@ -52,9 +51,9 @@ public class JpaUserRepository implements UserRepository {
 
 //         Query query = em.createQuery("DELETE FROM User u WHERE u.id=:id");
 //        return query.setParameter("id", id).executeUpdate() != 0;
-        return em.createNamedQuery(User.DELETE)
-                .setParameter("id", id)
-                .executeUpdate() != 0;
+            return em.createNamedQuery(User.DELETE)
+                    .setParameter("id", id)
+                    .executeUpdate() != 0;
     }
 
     @Override
