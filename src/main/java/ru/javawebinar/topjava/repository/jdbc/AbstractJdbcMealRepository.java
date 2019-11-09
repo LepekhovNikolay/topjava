@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,13 +14,17 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
+import static ru.javawebinar.topjava.Profiles.HSQL_DB;
+import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
 import static ru.javawebinar.topjava.util.DateTimeUtil.getEndExclusive;
 import static ru.javawebinar.topjava.util.DateTimeUtil.getStartInclusive;
 
 @Repository
-public abstract class AbstractJdbcMealRepository implements MealRepository {
+public class AbstractJdbcMealRepository implements MealRepository {
 
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
@@ -28,6 +33,9 @@ public abstract class AbstractJdbcMealRepository implements MealRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private final SimpleJdbcInsert insertMeal;
+
+    @Autowired
+    Environment environment;
 
     @Autowired
     public AbstractJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -60,6 +68,7 @@ public abstract class AbstractJdbcMealRepository implements MealRepository {
                 return null;
             }
         }
+        getDate(LocalDateTime.of(15,10,10,10, 10));
         return meal;
     }
 
@@ -86,5 +95,16 @@ public abstract class AbstractJdbcMealRepository implements MealRepository {
         return jdbcTemplate.query(
                 "SELECT * FROM meals WHERE user_id=? AND date_time >=? AND date_time < ? ORDER BY date_time DESC",
                 ROW_MAPPER, userId, getStartInclusive(startDate), getEndExclusive(endDate));
+    }
+
+    private Object getDate(LocalDateTime date) {
+        String[] environments = environment.getActiveProfiles();
+        if (Arrays.stream(environments).anyMatch(POSTGRES_DB::equals)) {
+            System.out.println("POSTGRES");
+        }
+        else if (Arrays.stream(environments).anyMatch(HSQL_DB::equals)) {
+            System.out.println("HSQLDB");
+        }
+        return new String();
     }
 }
