@@ -1,13 +1,15 @@
-package ru.javawebinar.topjava.web;
+package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -21,11 +23,12 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @Controller
+@RequestMapping(value = "/meals")
 public class JspMealController {
     @Autowired
     private MealService service;
 
-    @PostMapping("/meals")
+    @PostMapping()
     public String createOrUpdate(HttpServletRequest request) throws UnsupportedEncodingException {
         request.setCharacterEncoding("UTF-8");
         Meal meal = new Meal(
@@ -43,14 +46,14 @@ public class JspMealController {
     }
 
 
-    @GetMapping("/meals")
+    @GetMapping()
     public String meals(HttpServletRequest request) {
         int userId = SecurityUtil.authUserId();
         request.setAttribute("meals",MealsUtil.getTos(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay()));
         return "meals";
     }
 
-    @GetMapping("/meals/update")
+    @GetMapping("/update")
     public String update(HttpServletRequest request) {
         String action = request.getParameter("action");
         final Meal meal = "create".equals(action) ?
@@ -60,13 +63,13 @@ public class JspMealController {
         return "mealForm";
     }
 
-    @GetMapping("/meals/delete")
+    @GetMapping("/delete")
     public String delete(HttpServletRequest request) {
         service.delete(getId(request), SecurityUtil.authUserId());
         return "redirect:/meals";
     }
 
-    @GetMapping("/meals/filter")
+    @PostMapping("/filter")
     public String filter(HttpServletRequest request) {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
