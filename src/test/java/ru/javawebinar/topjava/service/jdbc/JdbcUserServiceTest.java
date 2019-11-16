@@ -7,4 +7,8 @@ import static ru.javawebinar.topjava.Profiles.JDBC;
 
 @ActiveProfiles(JDBC)
 public class JdbcUserServiceTest extends AbstractUserServiceTest {
+//    @BeforeClass
+//    public static void assumeJDBCTests() throws Exception {
+//        Assume.assumeFalse(true);
+//    }
 }
