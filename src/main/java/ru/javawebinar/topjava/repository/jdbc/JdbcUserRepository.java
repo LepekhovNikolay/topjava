@@ -10,12 +10,10 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import ru.javawebinar.topjava.model.AbstractBaseEntity;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -99,11 +97,7 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        List<User> users = jdbcTemplate.query("SELECT * FROM users INNER JOIN user_roles ur on users.id = ur.user_id ORDER BY name, email", ROW_MAPPER);
-        users = users.stream().sorted(Comparator.comparing(AbstractBaseEntity::getId)).collect(Collectors.toList());
-
-        return users;
- //       return users.stream().map(this::setRoles).collect(Collectors.toList());
-
+        List<User> users = jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+        return users.stream().map(this::setRoles).collect(Collectors.toList());
     }
 }
