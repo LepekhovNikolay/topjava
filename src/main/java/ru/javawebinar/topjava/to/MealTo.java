@@ -1,15 +1,25 @@
 package ru.javawebinar.topjava.to;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class MealTo extends BaseTo {
 
+    @NotBlank
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private final LocalDateTime dateTime;
 
+    @NotBlank
+    @Size(min = 2, max = 120)
     private final String description;
 
+    @NotBlank
+    @Size(min = 10, max = 5000)
     private final int calories;
 
     private final boolean excess;
